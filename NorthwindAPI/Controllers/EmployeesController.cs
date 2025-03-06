@@ -73,6 +73,7 @@ namespace NorthwindAPI.Controllers
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
             employee.ReportsTo = null;
+            employee.Photo = null; // 
             db.Employees.Add(employee);
             await db.SaveChangesAsync();
 
