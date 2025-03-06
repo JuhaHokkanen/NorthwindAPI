@@ -35,9 +35,13 @@ namespace NorthwindAPI.Controllers
         }
 
         // GET: api/Products/byname?name=Chai
+        // Tämä metodi hakee tuotteita, joiden nimi sisältää annetun nimen
+
         [HttpGet("byname")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductsByName(string name)
         {
+            // Haetaan tuotteita, joiden 'ProductName' kenttä sisältää annetun arvon
+
             return await db.Products.Where(p => p.ProductName.Contains(name)).ToListAsync();
         }
 
