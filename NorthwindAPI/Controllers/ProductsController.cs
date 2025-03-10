@@ -40,16 +40,26 @@ namespace NorthwindAPI.Controllers
         {
             try
             {
+                // Yritetään löytää tuote tietokannasta annetulla id:llä
                 var product = await db.Products.FindAsync(id);
+
+                // Jos tuotetta ei löydy, palautetaan 404 Not Found -vastaus
                 if (product == null)
-                    return NotFound();
-                return product;
+                {
+                    return NotFound("Tuotetta ei löydy");
+                }
+
+                // Jos tuote löytyy, palautetaan se 200 OK -vastauksena
+                return Ok(product);
             }
             catch (Exception ex)
             {
+                // Jos tulee jokin muu virhe, palautetaan 500 Internal Server Error -vastaus
                 return StatusCode(500, $"Sisäinen palvelinvirhe: {ex.Message}");
             }
         }
+
+
 
         // GET: api/Products/byname?name=Chai
         // Hakee tuotteita, joiden nimi sisältää annetun hakusanan
@@ -143,9 +153,7 @@ namespace NorthwindAPI.Controllers
 
                 return NoContent();
                 //palauttaa HTTP 204 No Content -statuskoodin, mikä tarkoittaa, että pyyntö on onnistuneesti suoritettu,
-                //mutta vastaukseen ei liity sisältöä. Tämä on yleinen käytäntö RESTful-rajapinnoissa,
-                //erityisesti DELETE-operaatioissa, koska kun resurssi on poistettu, sen palauttaminen ei ole tarpeen.
-                //Tämä selkeyttää API:n käytöstä ja vähentää tarpeettomien tietojen siirtoa asiakkaan ja palvelimen välillä.
+                
             }
             catch (Exception ex)
             {

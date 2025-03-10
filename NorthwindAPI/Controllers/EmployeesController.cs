@@ -33,7 +33,7 @@ namespace NorthwindAPI.Controllers
                     LastName = e.LastName,
                     FirstName = e.FirstName,
                     Title = e.Title,
-                    ReportsTo = null // Estetään looppi
+                    ReportsTo = null // Estetään mahdollinen looppi JSON-serialisoinnissa
                 }).ToListAsync();
             }
             catch (Exception ex)
@@ -44,7 +44,7 @@ namespace NorthwindAPI.Controllers
 
         // GET: api/Employees/5
         // Tämä metodi hakee yhden työntekijän ID:n perusteella
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
             try
@@ -69,20 +69,17 @@ namespace NorthwindAPI.Controllers
         [HttpGet("bytitle")]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployeesByTitle(string title)
         {
+            if (string.IsNullOrEmpty(title))
+            {
+                return BadRequest("Parametri 'title' on pakollinen ja sen tulee sisältää hakusana.");
+            }
+
             try
             {
-                // Suoritetaan tietokantakysely:
-                // 1. db.Employees: Valitaan kaikki työntekijät tietokannasta.
-                // 2. .Where(e => e.Title.Contains(title)): Suodatetaan työntekijät, joiden 'Title'-kenttä sisältää parametrina annetun 'title'-arvon.
-                // 3. .Select(...): Projektoidaan jokaisesta löydetystä työntekijästä uusi Employee-olio, jossa
-                //    - Otetaan mukaan olennaiset kentät: EmployeeId, LastName, FirstName, Title.
-                //    - ReportsTo kenttä asetetaan nollaksi (null), jotta vältetään mahdolliset ongelmat,
-                //      jotka voisivat aiheuttaa ongelmia esimerkiksi JSON-serialisoinnissa.
-                // 4. .ToListAsync(): Suoritetaan kysely asynkronisesti ja kerätään tulokset listaksi.
-                // Haetaan työntekijöitä, joiden 'Title' kenttä sisältää annetun arvon
+                // Suoritetaan tietokantakysely
 
                 return await db.Employees
-                    .Where(e => e.Title.Contains(title))
+                    .Where(e => e.Title != null && e.Title.Contains(title))
                     .Select(e => new Employee
                     {
                         EmployeeId = e.EmployeeId,
