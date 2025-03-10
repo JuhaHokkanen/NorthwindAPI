@@ -160,11 +160,11 @@ namespace NorthwindAPI.Controllers
                 // Jos työntekijä löytyy, poistetaan se tietokannasta.
 
                 db.Employees.Remove(employee);
+                
                 // Tallennetaan muutokset tietokantaan asynkronisesti.
-
                 await db.SaveChangesAsync();
+                
                 // Palautetaan 204 No Content -vastaus, mikä tarkoittaa, että pyyntö onnistui mutta sisältöä ei palauteta.
-
                 return NoContent();
             }
             catch (Exception ex)
