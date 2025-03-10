@@ -33,7 +33,7 @@ namespace NorthwindAPI.Controllers
                     LastName = e.LastName,
                     FirstName = e.FirstName,
                     Title = e.Title,
-                    ReportsTo = null // Estetään mahdollinen looppi JSON-serialisoinnissa
+                    ReportsTo = null // Estetään mahdollinen looppi JSON-serialisoinnissa 
                 }).ToListAsync();
             }
             catch (Exception ex)
