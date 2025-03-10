@@ -162,13 +162,5 @@ namespace NorthwindAPI.Controllers
                 return StatusCode(500, $"Sisäinen palvelinvirhe: {ex.Message}");
             }
         }
-
-        // Apumetodi, jolla tarkistetaan, onko tuote olemassa
-        private bool ProductExists(int id)
-        {
-            // Tarkistetaan LINQ:n Any-metodilla, löytyykö tuotteita, joiden ProductId vastaa annettua id:tä.
-            // Palauttaa true, jos ainakin yksi vastaava tuote löytyy, muuten false.
-            return db.Products.Any(e => e.ProductId == id);
-        }
     }
 }
