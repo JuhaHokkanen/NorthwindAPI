@@ -58,10 +58,18 @@ namespace NorthwindAPI.Controllers
         {
             try
             {
+
+                // Suoritetaan tietokantakysely, jossa etsitään tuotteita, joiden
+                // 'ProductName' sisältää annetun 'name'-merkkijonon.
+                // ToListAsync() kerää tulokset asynkronisesti listaksi.
+
                 return await db.Products.Where(p => p.ProductName.Contains(name)).ToListAsync();
             }
             catch (Exception ex)
             {
+                // Jos tapahtuu virhe, palautetaan HTTP 500 Internal Server Error -vastaus
+                // ja virheilmoitus, joka sisältää poikkeuksen viestin.
+
                 return StatusCode(500, $"Sisäinen palvelinvirhe: {ex.Message}");
             }
         }
@@ -117,16 +125,31 @@ namespace NorthwindAPI.Controllers
         {
             try
             {
+                // Etsitään tietokannasta tuote, jonka id vastaa annettua id:tä.
+
                 var product = await db.Products.FindAsync(id);
+
+                // Jos tuotetta ei löydy, palautetaan 404 Not Found -vastaus ja ilmoitus "Tuotetta ei löydy".
+
                 if (product == null)
                     return NotFound("Tuotetta ei löydy");
 
+                // Jos tuote löytyy, poistetaan se tietokannasta.
+
                 db.Products.Remove(product);
+
+                // Tallennetaan muutokset tietokantaan asynkronisesti.
                 await db.SaveChangesAsync();
+
                 return NoContent();
+                //palauttaa HTTP 204 No Content -statuskoodin, mikä tarkoittaa, että pyyntö on onnistuneesti suoritettu,
+                //mutta vastaukseen ei liity sisältöä. Tämä on yleinen käytäntö RESTful-rajapinnoissa,
+                //erityisesti DELETE-operaatioissa, koska kun resurssi on poistettu, sen palauttaminen ei ole tarpeen.
+                //Tämä selkeyttää API:n käytöstä ja vähentää tarpeettomien tietojen siirtoa asiakkaan ja palvelimen välillä.
             }
             catch (Exception ex)
             {
+                // Jos virhe tapahtuu, palautetaan 500 Internal Server Error -vastaus virheviestin kanssa.
                 return StatusCode(500, $"Sisäinen palvelinvirhe: {ex.Message}");
             }
         }
@@ -134,6 +157,8 @@ namespace NorthwindAPI.Controllers
         // Apumetodi, jolla tarkistetaan, onko tuote olemassa
         private bool ProductExists(int id)
         {
+            // Tarkistetaan LINQ:n Any-metodilla, löytyykö tuotteita, joiden ProductId vastaa annettua id:tä.
+            // Palauttaa true, jos ainakin yksi vastaava tuote löytyy, muuten false.
             return db.Products.Any(e => e.ProductId == id);
         }
     }
