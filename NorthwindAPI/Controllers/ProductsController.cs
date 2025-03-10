@@ -73,7 +73,7 @@ namespace NorthwindAPI.Controllers
                 // 'ProductName' sisältää annetun 'name'-merkkijonon.
                 // ToListAsync() kerää tulokset asynkronisesti listaksi.
 
-                return await db.Products.Where(p => p.ProductName.Contains(name)).ToListAsync();
+                return await db.Products.Where(p => p.ProductName.ToLower().Contains(name.ToLower())).ToListAsync();
             }
             catch (Exception ex)
             {
