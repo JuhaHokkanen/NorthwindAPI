@@ -71,7 +71,16 @@ namespace NorthwindAPI.Controllers
         {
             try
             {
+                // Suoritetaan tietokantakysely:
+                // 1. db.Employees: Valitaan kaikki työntekijät tietokannasta.
+                // 2. .Where(e => e.Title.Contains(title)): Suodatetaan työntekijät, joiden 'Title'-kenttä sisältää parametrina annetun 'title'-arvon.
+                // 3. .Select(...): Projektoidaan jokaisesta löydetystä työntekijästä uusi Employee-olio, jossa
+                //    - Otetaan mukaan olennaiset kentät: EmployeeId, LastName, FirstName, Title.
+                //    - ReportsTo kenttä asetetaan nollaksi (null), jotta vältetään mahdolliset ongelmat,
+                //      jotka voisivat aiheuttaa ongelmia esimerkiksi JSON-serialisoinnissa.
+                // 4. .ToListAsync(): Suoritetaan kysely asynkronisesti ja kerätään tulokset listaksi.
                 // Haetaan työntekijöitä, joiden 'Title' kenttä sisältää annetun arvon
+
                 return await db.Employees
                     .Where(e => e.Title.Contains(title))
                     .Select(e => new Employee
@@ -141,17 +150,30 @@ namespace NorthwindAPI.Controllers
         {
             try
             {
+                // Etsitään työntekijä tietokannasta käyttäen annettua id:tä.
+
                 var employee = await db.Employees.FindAsync(id);
+
+                // Jos työntekijää ei löydy, palautetaan 404 Not Found -vastaus ja viesti "Työntekijää ei löydy".
+
                 if (employee == null)
                     return NotFound("Työntekijää ei löydy");
 
                 // Poistetaan työntekijä tietokannasta
+                // Jos työntekijä löytyy, poistetaan se tietokannasta.
+
                 db.Employees.Remove(employee);
+                // Tallennetaan muutokset tietokantaan asynkronisesti.
+
                 await db.SaveChangesAsync();
+                // Palautetaan 204 No Content -vastaus, mikä tarkoittaa, että pyyntö onnistui mutta sisältöä ei palauteta.
+
                 return NoContent();
             }
             catch (Exception ex)
             {
+                // Jos jossain vaiheessa tapahtuu virhe, palautetaan 500 Internal Server Error -vastaus
+                // ja lisätietoa virheestä sisällytettynä viestissä.
                 return StatusCode(500, $"Sisäinen palvelinvirhe: {ex.Message}");
             }
         }
