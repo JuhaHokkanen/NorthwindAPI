@@ -102,7 +102,6 @@ namespace NorthwindAPI.Controllers
         }
 
         // PUT: api/Products/5
-        // Päivittää olemassa olevan tuotteen tiedot
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
@@ -117,7 +116,8 @@ namespace NorthwindAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                // Tarkistetaan suoraan, onko tuotetta tietokannassa
+                if (!db.Products.Any(e => e.ProductId == id))
                     return NotFound();
                 else
                     throw;
@@ -127,6 +127,7 @@ namespace NorthwindAPI.Controllers
                 return StatusCode(500, $"Sisäinen palvelinvirhe: {ex.Message}");
             }
         }
+
 
         // DELETE: api/Products/5
         // Poistaa tuotteen tietokannasta
