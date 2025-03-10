@@ -29,7 +29,7 @@ namespace NorthwindAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Palautetaan 500 Internal Server Error, jos tapahtuu poikkeus
+                // Palautetaan 500 Internal Server Error, jos tapahtuu palvelimen päässä ongelmia
                 return StatusCode(500, $"Sisäinen palvelinvirhe: {ex.Message}");
             }
         }
